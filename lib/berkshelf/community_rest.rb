@@ -77,6 +77,9 @@ module Berkshelf
     def initialize(uri = V1_API, options = {})
       options         = options.reverse_merge(retries: 5, retry_interval: 0.5)
       @api_uri        = Addressable::URI.parse(uri)
+      #The fix for failing https requests because the are sent to port 80
+      #is to set the port because Addressable::URI (2.3.8) does not.
+      @api_uri.port = 443 if @api_uri.scheme == 'https' && @api_uri.port.nil?
       @retries        = options[:retries]
       @retry_interval = options[:retry_interval]
 
